@@ -1,0 +1,712 @@
+import { useState, useEffect, useRef } from "react";
+
+const sections = ["about", "experience", "projects", "skills", "contact"];
+
+const BG = "#fffdfb";
+const TEXT_PRIMARY = "#1c1816";
+const TEXT_MUTED = "#9a9189";
+const TEXT_BODY = "#3d3530";
+const LINE = "#ebe6df";
+
+function useInView(threshold = 0.15) {
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const obs = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) setVisible(true);
+      },
+      { threshold }
+    );
+
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, [threshold]);
+
+  return [ref, visible];
+}
+
+function FadeIn({ children, delay = 0 }) {
+  const [ref, visible] = useInView();
+
+  return (
+    <div
+      ref={ref}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translateY(0)" : "translateY(18px)",
+        transition: `opacity 0.7s ease ${delay}s, transform 0.7s ease ${delay}s`,
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
+const Tag = ({ children, accent }) => (
+  <span
+    style={{
+      display: "inline-block",
+      padding: "3px 9px",
+      borderRadius: "3px",
+      fontSize: "0.68rem",
+      letterSpacing: "0.08em",
+      fontFamily: "'DM Mono', monospace",
+      background:
+        accent === "burgundy"
+          ? "#6b2737"
+          : accent === "navy"
+          ? "#1a2d4d"
+          : "#2f3d2f",
+      color: "#fffdfb",
+    }}
+  >
+    {children}
+  </span>
+);
+
+const SectionLabel = ({ children }) => (
+  <p
+    style={{
+      fontFamily: "'DM Mono', monospace",
+      fontSize: "0.65rem",
+      letterSpacing: "0.18em",
+      textTransform: "uppercase",
+      color: TEXT_MUTED,
+      marginBottom: "2rem",
+    }}
+  >
+    {children}
+  </p>
+);
+
+function PolaroidCollage() {
+  const photos = [
+    { src: "/images/photo1.jpg", rotate: "-6deg", top: "10px", left: "5px", z: 1 },
+    { src: "/images/photo2.jpg", rotate: "5deg", top: "90px", left: "125px", z: 3 },
+    { src: "/images/photo3.jpg", rotate: "-3deg", top: "210px", left: "35px", z: 2 },
+  ];
+
+  return (
+    <div className="polaroid-wrap">
+      {photos.map((photo, index) => (
+        <div
+          key={index}
+          className="polaroid"
+          style={{
+            top: photo.top,
+            left: photo.left,
+            transform: `rotate(${photo.rotate})`,
+            zIndex: photo.z,
+          }}
+        >
+          <div className="photo-box">
+            <img src={photo.src} alt={`personal ${index + 1}`} />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default function Portfolio() {
+  const [activeNav, setActiveNav] = useState("");
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 60);
+
+      const current = sections.find((id) => {
+        const el = document.getElementById(id);
+        if (!el) return false;
+        const rect = el.getBoundingClientRect();
+        return rect.top <= 120 && rect.bottom > 120;
+      });
+
+      if (current) setActiveNav(current);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollTo = (id) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const experience = [
+    {
+      company: "pepsico",
+      role: "procurement intern · incoming",
+      year: "2025",
+      bullets: [
+        "working on data-driven procurement processes and dashboards",
+        "supporting project-based initiatives at hq",
+      ],
+    },
+    {
+      company: "pepsico",
+      role: "supply planning analyst intern",
+      year: "2024",
+      bullets: [
+        "built power bi dashboards and excel automation tools to support supply planning workflows",
+        "worked with large-scale supply chain datasets across enterprise systems",
+        "supported tracking systems including days on hand metrics and purchase order management",
+      ],
+    },
+  ];
+
+  const projects = [
+    {
+      title: "3d mapping system",
+      type: "embedded systems",
+      desc: "spatial mapping pipeline using a time-of-flight sensor and microcontroller. data transmitted through uart to matlab for 3d point-cloud visualization.",
+      tools: "c / embedded / matlab",
+    },
+    {
+      title: "c++ snake game",
+      type: "object-oriented design",
+      desc: "terminal-based snake game built with custom classes, data structures, finite state movement, and manual memory management.",
+      tools: "c++ / oop",
+    },
+    {
+      title: "data + automation work",
+      type: "analytics tooling",
+      desc: "dashboards and workflows focused on making operational processes easier to track, understand, and improve.",
+      tools: "python / power bi / excel",
+    },
+  ];
+
+  return (
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Mono:wght@300;400&display=swap');
+
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+
+        html {
+          scroll-behavior: smooth;
+        }
+
+        body {
+          background: ${BG};
+        }
+
+        .page {
+          background: ${BG};
+          color: ${TEXT_PRIMARY};
+          font-family: 'Cormorant Garamond', Georgia, serif;
+          min-height: 100vh;
+        }
+
+        nav {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          z-index: 100;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 1.2rem 3rem;
+          background: ${scrolled ? "rgba(255,253,251,0.92)" : "transparent"};
+          backdrop-filter: ${scrolled ? "blur(12px)" : "none"};
+          border-bottom: ${scrolled ? `1px solid ${LINE}` : "none"};
+          transition: all 0.3s ease;
+        }
+
+        .nav-name {
+          font-size: 1rem;
+          font-style: italic;
+        }
+
+        .nav-links {
+          display: flex;
+          gap: 2rem;
+        }
+
+        .nav-links button {
+          font-family: 'DM Mono', monospace;
+          font-size: 0.62rem;
+          letter-spacing: 0.14em;
+          text-transform: uppercase;
+          background: none;
+          border: none;
+          cursor: pointer;
+        }
+
+        .intro {
+          max-width: 1040px;
+          margin: 0 auto;
+          padding: 16vh 3rem 7rem;
+          display: grid;
+          grid-template-columns: 1.1fr 0.9fr;
+          gap: 4.5rem;
+          align-items: center;
+        }
+
+        .name {
+          font-size: clamp(3.4rem, 8vw, 6.6rem);
+          font-weight: 300;
+          line-height: 0.92;
+          letter-spacing: -0.035em;
+          margin-bottom: 1.3rem;
+        }
+
+        .tags {
+          display: flex;
+          gap: 0.55rem;
+          flex-wrap: wrap;
+          margin-bottom: 2.2rem;
+        }
+
+        .jots {
+          margin-top: 2.4rem;
+          max-width: 620px;
+        }
+
+        .jot {
+          display: grid;
+          grid-template-columns: 2rem 1fr;
+          gap: 0.9rem;
+          padding: 0.38rem 0;
+          font-size: 1.15rem;
+          line-height: 1.45;
+          color: ${TEXT_BODY};
+        }
+
+        .jot span:first-child {
+          font-family: 'DM Mono', monospace;
+          font-size: 0.68rem;
+          letter-spacing: 0.12em;
+          color: ${TEXT_MUTED};
+          padding-top: 0.35rem;
+        }
+
+        .polaroid-wrap {
+          position: relative;
+          height: 430px;
+          width: 100%;
+        }
+
+        .polaroid {
+          position: absolute;
+          width: 190px;
+          background: white;
+          padding: 10px 10px 34px;
+          box-shadow: 0 8px 24px rgba(28, 24, 22, 0.10);
+          transition: transform 0.25s ease;
+        }
+
+        .polaroid:hover {
+          transform: rotate(0deg) translateY(-4px) !important;
+        }
+
+        .photo-box {
+          width: 170px;
+          height: 150px;
+          background: #f2ede7;
+          overflow: hidden;
+        }
+
+        .photo-box img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+        }
+
+        section {
+          max-width: 880px;
+          margin: 0 auto;
+          padding: 5.5rem 3rem;
+          border-top: 1px solid ${LINE};
+        }
+
+        .about-text {
+          max-width: 650px;
+          font-size: 1.35rem;
+          line-height: 1.75;
+          color: ${TEXT_BODY};
+        }
+
+        .experience-list,
+        .project-list {
+          display: flex;
+          flex-direction: column;
+          gap: 3.2rem;
+        }
+
+        .experience-item {
+          display: grid;
+          grid-template-columns: 0.8fr 1.6fr;
+          gap: 3rem;
+        }
+
+        .company {
+          font-size: 1.45rem;
+          font-weight: 500;
+          margin-bottom: 0.35rem;
+        }
+
+        .meta {
+          font-family: 'DM Mono', monospace;
+          font-size: 0.65rem;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          color: ${TEXT_MUTED};
+          margin-bottom: 0.8rem;
+        }
+
+        ul {
+          list-style: none;
+        }
+
+        li {
+          position: relative;
+          padding-left: 1.1rem;
+          margin-bottom: 0.45rem;
+          font-size: 1.05rem;
+          line-height: 1.65;
+          color: ${TEXT_BODY};
+        }
+
+        li::before {
+          content: "—";
+          position: absolute;
+          left: 0;
+          color: #c5beb6;
+        }
+
+        .project-item {
+          display: grid;
+          grid-template-columns: 3rem 1fr;
+          gap: 1.4rem;
+          max-width: 760px;
+        }
+
+        .project-num {
+          font-family: 'DM Mono', monospace;
+          font-size: 0.65rem;
+          letter-spacing: 0.15em;
+          color: #c5beb6;
+          padding-top: 0.45rem;
+        }
+
+        .project-title {
+          font-size: 1.45rem;
+          font-weight: 500;
+          margin-bottom: 0.25rem;
+        }
+
+        .project-desc {
+          font-size: 1.02rem;
+          line-height: 1.7;
+          color: ${TEXT_BODY};
+          max-width: 620px;
+        }
+
+        .tool-line {
+          font-family: 'DM Mono', monospace;
+          font-size: 0.68rem;
+          letter-spacing: 0.08em;
+          color: ${TEXT_MUTED};
+          margin-top: 0.8rem;
+        }
+
+        .skills {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 3rem;
+        }
+
+        .skill-group h3 {
+          font-family: 'DM Mono', monospace;
+          font-size: 0.65rem;
+          letter-spacing: 0.16em;
+          text-transform: uppercase;
+          color: ${TEXT_MUTED};
+          margin-bottom: 1rem;
+          font-weight: 400;
+        }
+
+        .skill-group p {
+          font-size: 1.08rem;
+          line-height: 1.7;
+          color: ${TEXT_BODY};
+        }
+
+        .contact-list {
+          display: flex;
+          gap: 3.5rem;
+          flex-wrap: wrap;
+        }
+
+        .contact-list a {
+          display: block;
+          font-size: 1.35rem;
+          color: ${TEXT_PRIMARY};
+          text-decoration: none;
+          border-bottom: 1px solid transparent;
+          margin-top: 0.25rem;
+        }
+
+        .contact-list a:hover {
+          border-color: ${TEXT_PRIMARY};
+        }
+
+        footer {
+          max-width: 880px;
+          margin: 0 auto;
+          padding: 2rem 3rem 3rem;
+          display: flex;
+          justify-content: space-between;
+          gap: 1rem;
+          font-family: 'DM Mono', monospace;
+          font-size: 0.58rem;
+          letter-spacing: 0.12em;
+          color: #c5beb6;
+        }
+
+        @media (max-width: 850px) {
+          nav {
+            padding: 1rem 1.5rem;
+          }
+
+          .nav-links {
+            gap: 1rem;
+          }
+
+          .nav-links button {
+            font-size: 0.55rem;
+          }
+
+          .intro {
+            grid-template-columns: 1fr;
+            padding: 13vh 1.5rem 4rem;
+            gap: 2.5rem;
+          }
+
+          .polaroid-wrap {
+            height: 330px;
+            max-width: 330px;
+          }
+
+          .polaroid {
+            width: 155px;
+            padding: 8px 8px 28px;
+          }
+
+          .photo-box {
+            width: 139px;
+            height: 125px;
+          }
+
+          section {
+            padding: 4rem 1.5rem;
+          }
+
+          .experience-item {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+          }
+
+          .project-item {
+            grid-template-columns: 2.4rem 1fr;
+          }
+
+          .skills {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+          }
+
+          footer {
+            padding: 2rem 1.5rem;
+            flex-direction: column;
+          }
+        }
+      `}</style>
+
+      <nav>
+        <div className="nav-name">aman minhas</div>
+
+        <div className="nav-links">
+          {sections.map((sec) => (
+            <button
+              key={sec}
+              onClick={() => scrollTo(sec)}
+              style={{
+                color: activeNav === sec ? TEXT_PRIMARY : TEXT_MUTED,
+              }}
+            >
+              {sec}
+            </button>
+          ))}
+        </div>
+      </nav>
+
+      <main className="page">
+        <div className="intro">
+          <div>
+            <h1 className="name">
+              aman
+              <br />
+              minhas.
+            </h1>
+
+            <div className="tags">
+              <Tag accent="burgundy">electrical engineering @ mcmaster</Tag>
+              <Tag accent="navy">data & analytics @ pepsico</Tag>
+            </div>
+
+            <div className="jots">
+              <div className="jot">
+                <span>i.</span>
+                <p>currently procurement intern @ pepsico</p>
+              </div>
+              <div className="jot">
+                <span>ii.</span>
+                <p>studying electrical engineering + innovation minor @ mcmaster</p>
+              </div>
+              <div className="jot">
+                <span>iii.</span>
+                <p>previously supply planning analyst intern @ pepsico</p>
+              </div>
+              <div className="jot">
+                <span>iv.</span>
+                <p>interested in data engineering, automation, and technical project management</p>
+              </div>
+            </div>
+          </div>
+
+          <PolaroidCollage />
+        </div>
+
+        <section id="about">
+          <FadeIn>
+            <SectionLabel>i. about</SectionLabel>
+            <p className="about-text">
+              electrical engineering student focused on applying data and automation to real-world systems.
+              experienced in building dashboards, working with large-scale datasets, and improving processes in enterprise environments.
+              interested in the space between engineering, data, and operations.
+            </p>
+          </FadeIn>
+        </section>
+
+        <section id="experience">
+          <FadeIn>
+            <SectionLabel>ii. experience</SectionLabel>
+          </FadeIn>
+
+          <div className="experience-list">
+            {experience.map((item, index) => (
+              <FadeIn key={index} delay={index * 0.08}>
+                <div className="experience-item">
+                  <div>
+                    <h2 className="company">{item.company}</h2>
+                    <p className="meta">{item.role}</p>
+                    <Tag accent={index === 0 ? "navy" : "burgundy"}>{item.year}</Tag>
+                  </div>
+
+                  <ul>
+                    {item.bullets.map((bullet) => (
+                      <li key={bullet}>{bullet}</li>
+                    ))}
+                  </ul>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+        </section>
+
+        <section id="projects">
+          <FadeIn>
+            <SectionLabel>iii. projects</SectionLabel>
+          </FadeIn>
+
+          <div className="project-list">
+            {projects.map((project, index) => (
+              <FadeIn key={index} delay={index * 0.08}>
+                <div className="project-item">
+                  <p className="project-num">0{index + 1}</p>
+
+                  <div>
+                    <h2 className="project-title">{project.title}</h2>
+                    <p className="meta">{project.type}</p>
+                    <p className="project-desc">{project.desc}</p>
+                    <p className="tool-line">{project.tools}</p>
+                  </div>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+        </section>
+
+        <section id="skills">
+          <FadeIn>
+            <SectionLabel>iv. skills</SectionLabel>
+          </FadeIn>
+
+          <FadeIn delay={0.08}>
+            <div className="skills">
+              <div className="skill-group">
+                <h3>data</h3>
+                <p>python, sql, power bi, excel, power query, macros</p>
+              </div>
+
+              <div className="skill-group">
+                <h3>engineering</h3>
+                <p>c / c++, embedded systems, matlab, uart, microcontrollers</p>
+              </div>
+
+              <div className="skill-group">
+                <h3>other</h3>
+                <p>dashboarding, process optimization, data analysis, technical project management</p>
+              </div>
+            </div>
+          </FadeIn>
+        </section>
+
+        <section id="contact">
+          <FadeIn>
+            <SectionLabel>v. contact</SectionLabel>
+          </FadeIn>
+
+          <FadeIn delay={0.08}>
+            <div className="contact-list">
+              <div>
+                <p className="meta">email</p>
+                <a href="mailto:minhaaa@mcmaster.ca">minhaaa@mcmaster.ca</a>
+              </div>
+
+              <div>
+                <p className="meta">linkedin</p>
+                <a href="https://linkedin.com/in/amanminhas" target="_blank" rel="noreferrer">
+                  linkedin.com/in/amanminhas
+                </a>
+              </div>
+
+              <div>
+                <p className="meta">github</p>
+                <a href="https://github.com/amanminhas" target="_blank" rel="noreferrer">
+                  github.com/amanminhas
+                </a>
+              </div>
+            </div>
+          </FadeIn>
+        </section>
+
+        <footer>
+          <span>aman minhas · {new Date().getFullYear()}</span>
+          <span>electrical engineering @ mcmaster</span>
+        </footer>
+      </main>
+    </>
+  );
+}

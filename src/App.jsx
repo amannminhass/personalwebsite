@@ -1,33 +1,30 @@
 import { useState, useEffect, useRef } from "react";
 
-const sections = ["about", "experience", "projects", "skills", "contact"];
-
 const BG = "#fffdfb";
 const TEXT_PRIMARY = "#1c1816";
 const TEXT_MUTED = "#9a9189";
 const TEXT_BODY = "#3d3530";
 const LINE = "#ebe6df";
 
-function useInView(threshold = 0.15) {
+const sections = ["about", "experience", "projects", "skills", "contact"];
+
+function useInView() {
   const ref = useRef(null);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const obs = new IntersectionObserver(
-      ([e]) => {
-        if (e.isIntersecting) setVisible(true);
-      },
-      { threshold }
-    );
+    const obs = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) setVisible(true);
+    });
 
     if (ref.current) obs.observe(ref.current);
     return () => obs.disconnect();
-  }, [threshold]);
+  }, []);
 
   return [ref, visible];
 }
 
-function FadeIn({ children, delay = 0 }) {
+function FadeIn({ children }) {
   const [ref, visible] = useInView();
 
   return (
@@ -35,8 +32,8 @@ function FadeIn({ children, delay = 0 }) {
       ref={ref}
       style={{
         opacity: visible ? 1 : 0,
-        transform: visible ? "translateY(0)" : "translateY(18px)",
-        transition: `opacity 0.7s ease ${delay}s, transform 0.7s ease ${delay}s`,
+        transform: visible ? "translateY(0)" : "translateY(16px)",
+        transition: "all 0.7s ease",
       }}
     >
       {children}
@@ -44,55 +41,53 @@ function FadeIn({ children, delay = 0 }) {
   );
 }
 
-const Tag = ({ children, accent }) => (
-  <span
-    style={{
-      display: "inline-block",
-      padding: "3px 9px",
-      borderRadius: "3px",
-      fontSize: "0.68rem",
-      letterSpacing: "0.08em",
-      fontFamily: "'DM Mono', monospace",
-      background:
-        accent === "burgundy"
-          ? "#6b2737"
-          : accent === "navy"
-          ? "#1a2d4d"
-          : "#2f3d2f",
-      color: "#fffdfb",
-    }}
-  >
-    {children}
-  </span>
-);
+function Tag({ children, color }) {
+  return (
+    <span
+      style={{
+        background: color,
+        color: "#fffdfb",
+        padding: "3px 9px",
+        borderRadius: "3px",
+        fontFamily: "'DM Mono', monospace",
+        fontSize: "0.68rem",
+        letterSpacing: "0.08em",
+      }}
+    >
+      {children}
+    </span>
+  );
+}
 
-const SectionLabel = ({ children }) => (
-  <p
-    style={{
-      fontFamily: "'DM Mono', monospace",
-      fontSize: "0.65rem",
-      letterSpacing: "0.18em",
-      textTransform: "uppercase",
-      color: TEXT_MUTED,
-      marginBottom: "2rem",
-    }}
-  >
-    {children}
-  </p>
-);
+function SectionLabel({ children }) {
+  return (
+    <p
+      style={{
+        fontFamily: "'DM Mono', monospace",
+        fontSize: "0.65rem",
+        letterSpacing: "0.18em",
+        textTransform: "uppercase",
+        color: TEXT_MUTED,
+        marginBottom: "2rem",
+      }}
+    >
+      {children}
+    </p>
+  );
+}
 
-function PolaroidCollage() {
+function Polaroids() {
   const photos = [
-    { src: "/images/photo1.jpg", rotate: "-6deg", top: "10px", left: "5px", z: 1 },
-    { src: "/images/photo2.jpg", rotate: "5deg", top: "90px", left: "125px", z: 3 },
-    { src: "/images/photo3.jpg", rotate: "-3deg", top: "210px", left: "35px", z: 2 },
+    { src: "/images/photo1.jpg", top: "10px", left: "5px", rotate: "-6deg", z: 1 },
+    { src: "/images/photo2.jpg", top: "95px", left: "125px", rotate: "5deg", z: 3 },
+    { src: "/images/photo3.jpg", top: "215px", left: "35px", rotate: "-3deg", z: 2 },
   ];
 
   return (
-    <div className="polaroid-wrap">
-      {photos.map((photo, index) => (
+    <div className="polaroids">
+      {photos.map((photo, i) => (
         <div
-          key={index}
+          key={i}
           className="polaroid"
           style={{
             top: photo.top,
@@ -101,21 +96,19 @@ function PolaroidCollage() {
             zIndex: photo.z,
           }}
         >
-          <div className="photo-box">
-            <img src={photo.src} alt={`personal ${index + 1}`} />
-          </div>
+          <img src={photo.src} alt={`photo ${i + 1}`} />
         </div>
       ))}
     </div>
   );
 }
 
-export default function Portfolio() {
-  const [activeNav, setActiveNav] = useState("");
+export default function App() {
+  const [active, setActive] = useState("");
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
+    function onScroll() {
       setScrolled(window.scrollY > 60);
 
       const current = sections.find((id) => {
@@ -125,69 +118,26 @@ export default function Portfolio() {
         return rect.top <= 120 && rect.bottom > 120;
       });
 
-      if (current) setActiveNav(current);
-    };
+      if (current) setActive(current);
+    }
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const scrollTo = (id) => {
+  function scrollTo(id) {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  const experience = [
-    {
-      company: "pepsico",
-      role: "procurement intern · incoming",
-      year: "2025",
-      bullets: [
-        "working on data-driven procurement processes and dashboards",
-        "supporting project-based initiatives at hq",
-      ],
-    },
-    {
-      company: "pepsico",
-      role: "supply planning analyst intern",
-      year: "2024",
-      bullets: [
-        "built power bi dashboards and excel automation tools to support supply planning workflows",
-        "worked with large-scale supply chain datasets across enterprise systems",
-        "supported tracking systems including days on hand metrics and purchase order management",
-      ],
-    },
-  ];
-
-  const projects = [
-    {
-      title: "3d mapping system",
-      type: "embedded systems",
-      desc: "spatial mapping pipeline using a time-of-flight sensor and microcontroller. data transmitted through uart to matlab for 3d point-cloud visualization.",
-      tools: "c / embedded / matlab",
-    },
-    {
-      title: "c++ snake game",
-      type: "object-oriented design",
-      desc: "terminal-based snake game built with custom classes, data structures, finite state movement, and manual memory management.",
-      tools: "c++ / oop",
-    },
-    {
-      title: "data + automation work",
-      type: "analytics tooling",
-      desc: "dashboards and workflows focused on making operational processes easier to track, understand, and improve.",
-      tools: "python / power bi / excel",
-    },
-  ];
+  }
 
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Mono:wght@300;400&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,300;0,400;1,400&family=DM+Mono:wght@300;400&display=swap');
 
         * {
+          box-sizing: border-box;
           margin: 0;
           padding: 0;
-          box-sizing: border-box;
         }
 
         html {
@@ -199,10 +149,10 @@ export default function Portfolio() {
         }
 
         .page {
+          min-height: 100vh;
           background: ${BG};
           color: ${TEXT_PRIMARY};
           font-family: 'Cormorant Garamond', Georgia, serif;
-          min-height: 100vh;
         }
 
         nav {
@@ -218,7 +168,6 @@ export default function Portfolio() {
           background: ${scrolled ? "rgba(255,253,251,0.92)" : "transparent"};
           backdrop-filter: ${scrolled ? "blur(12px)" : "none"};
           border-bottom: ${scrolled ? `1px solid ${LINE}` : "none"};
-          transition: all 0.3s ease;
         }
 
         .nav-name {
@@ -252,12 +201,17 @@ export default function Portfolio() {
         }
 
         .name {
+          font-family: 'Playfair Display', serif;
           font-size: clamp(3.4rem, 8vw, 6.6rem);
           font-weight: 300;
           line-height: 0.92;
           letter-spacing: -0.035em;
           margin-bottom: 1.3rem;
+          text-align: center;
+          max-width: 520px;
+          font-style: italic;
         }
+
 
         .tags {
           display: flex;
@@ -266,8 +220,13 @@ export default function Portfolio() {
           margin-bottom: 2.2rem;
         }
 
+        .centered-tags {
+          justify-content: center;
+          max-width: 520px;
+        }
+
         .jots {
-          margin-top: 2.4rem;
+          margin-top: 2rem;
           max-width: 620px;
         }
 
@@ -281,7 +240,7 @@ export default function Portfolio() {
           color: ${TEXT_BODY};
         }
 
-        .jot span:first-child {
+        .jot span {
           font-family: 'DM Mono', monospace;
           font-size: 0.68rem;
           letter-spacing: 0.12em;
@@ -289,7 +248,7 @@ export default function Portfolio() {
           padding-top: 0.35rem;
         }
 
-        .polaroid-wrap {
+        .polaroids {
           position: relative;
           height: 430px;
           width: 100%;
@@ -308,18 +267,12 @@ export default function Portfolio() {
           transform: rotate(0deg) translateY(-4px) !important;
         }
 
-        .photo-box {
+        .polaroid img {
           width: 170px;
           height: 150px;
-          background: #f2ede7;
-          overflow: hidden;
-        }
-
-        .photo-box img {
-          width: 100%;
-          height: 100%;
           object-fit: cover;
           display: block;
+          background: #f2ede7;
         }
 
         section {
@@ -349,7 +302,8 @@ export default function Portfolio() {
           gap: 3rem;
         }
 
-        .company {
+        .company,
+        .project-title {
           font-size: 1.45rem;
           font-weight: 500;
           margin-bottom: 0.35rem;
@@ -397,12 +351,6 @@ export default function Portfolio() {
           letter-spacing: 0.15em;
           color: #c5beb6;
           padding-top: 0.45rem;
-        }
-
-        .project-title {
-          font-size: 1.45rem;
-          font-weight: 500;
-          margin-bottom: 0.25rem;
         }
 
         .project-desc {
@@ -493,7 +441,7 @@ export default function Portfolio() {
             gap: 2.5rem;
           }
 
-          .polaroid-wrap {
+          .polaroids {
             height: 330px;
             max-width: 330px;
           }
@@ -503,7 +451,7 @@ export default function Portfolio() {
             padding: 8px 8px 28px;
           }
 
-          .photo-box {
+          .polaroid img {
             width: 139px;
             height: 125px;
           }
@@ -541,9 +489,7 @@ export default function Portfolio() {
             <button
               key={sec}
               onClick={() => scrollTo(sec)}
-              style={{
-                color: activeNav === sec ? TEXT_PRIMARY : TEXT_MUTED,
-              }}
+              style={{ color: active === sec ? TEXT_PRIMARY : TEXT_MUTED }}
             >
               {sec}
             </button>
@@ -555,16 +501,15 @@ export default function Portfolio() {
         <div className="intro">
           <div>
             <h1 className="name">
-              aman
+              Aman
               <br />
-              minhas.
+              Minhas
             </h1>
 
-            <div className="tags">
-              <Tag accent="burgundy">electrical engineering @ mcmaster</Tag>
-              <Tag accent="navy">data & analytics @ pepsico</Tag>
-            </div>
-
+          <div className="tags centered-tags">
+            <Tag color="#6b2737">electrical engineering @ mcmaster</Tag>
+            <Tag color="#1a2d4d">data & analytics @ pepsico</Tag>
+          </div>
             <div className="jots">
               <div className="jot">
                 <span>i.</span>
@@ -585,7 +530,7 @@ export default function Portfolio() {
             </div>
           </div>
 
-          <PolaroidCollage />
+          <Polaroids />
         </div>
 
         <section id="about">
@@ -605,23 +550,34 @@ export default function Portfolio() {
           </FadeIn>
 
           <div className="experience-list">
-            {experience.map((item, index) => (
-              <FadeIn key={index} delay={index * 0.08}>
-                <div className="experience-item">
-                  <div>
-                    <h2 className="company">{item.company}</h2>
-                    <p className="meta">{item.role}</p>
-                    <Tag accent={index === 0 ? "navy" : "burgundy"}>{item.year}</Tag>
-                  </div>
-
-                  <ul>
-                    {item.bullets.map((bullet) => (
-                      <li key={bullet}>{bullet}</li>
-                    ))}
-                  </ul>
+            <FadeIn>
+              <div className="experience-item">
+                <div>
+                  <h2 className="company">pepsico</h2>
+                  <p className="meta">procurement intern · incoming</p>
+                  <Tag color="#1a2d4d">2025</Tag>
                 </div>
-              </FadeIn>
-            ))}
+                <ul>
+                  <li>working on data-driven procurement processes and dashboards</li>
+                  <li>supporting project-based initiatives at hq</li>
+                </ul>
+              </div>
+            </FadeIn>
+
+            <FadeIn>
+              <div className="experience-item">
+                <div>
+                  <h2 className="company">pepsico</h2>
+                  <p className="meta">supply planning analyst intern</p>
+                  <Tag color="#6b2737">2024</Tag>
+                </div>
+                <ul>
+                  <li>built power bi dashboards and excel automation tools to support supply planning workflows</li>
+                  <li>worked with large-scale supply chain datasets across enterprise systems</li>
+                  <li>supported tracking systems including days on hand metrics and purchase order management</li>
+                </ul>
+              </div>
+            </FadeIn>
           </div>
         </section>
 
@@ -631,20 +587,50 @@ export default function Portfolio() {
           </FadeIn>
 
           <div className="project-list">
-            {projects.map((project, index) => (
-              <FadeIn key={index} delay={index * 0.08}>
-                <div className="project-item">
-                  <p className="project-num">0{index + 1}</p>
-
-                  <div>
-                    <h2 className="project-title">{project.title}</h2>
-                    <p className="meta">{project.type}</p>
-                    <p className="project-desc">{project.desc}</p>
-                    <p className="tool-line">{project.tools}</p>
-                  </div>
+            <FadeIn>
+              <div className="project-item">
+                <p className="project-num">01</p>
+                <div>
+                  <h2 className="project-title">3d mapping system</h2>
+                  <p className="meta">embedded systems</p>
+                  <p className="project-desc">
+                    spatial mapping pipeline using a time-of-flight sensor and microcontroller.
+                    data transmitted through uart to matlab for 3d point-cloud visualization.
+                  </p>
+                  <p className="tool-line">c / embedded / matlab</p>
                 </div>
-              </FadeIn>
-            ))}
+              </div>
+            </FadeIn>
+
+            <FadeIn>
+              <div className="project-item">
+                <p className="project-num">02</p>
+                <div>
+                  <h2 className="project-title">c++ snake game</h2>
+                  <p className="meta">object-oriented design</p>
+                  <p className="project-desc">
+                    terminal-based snake game built with custom classes, data structures,
+                    finite state movement, and manual memory management.
+                  </p>
+                  <p className="tool-line">c++ / oop</p>
+                </div>
+              </div>
+            </FadeIn>
+
+            <FadeIn>
+              <div className="project-item">
+                <p className="project-num">03</p>
+                <div>
+                  <h2 className="project-title">data + automation work</h2>
+                  <p className="meta">analytics tooling</p>
+                  <p className="project-desc">
+                    dashboards and workflows focused on making operational processes easier to track,
+                    understand, and improve.
+                  </p>
+                  <p className="tool-line">python / power bi / excel</p>
+                </div>
+              </div>
+            </FadeIn>
           </div>
         </section>
 
@@ -653,24 +639,22 @@ export default function Portfolio() {
             <SectionLabel>iv. skills</SectionLabel>
           </FadeIn>
 
-          <FadeIn delay={0.08}>
-            <div className="skills">
-              <div className="skill-group">
-                <h3>data</h3>
-                <p>python, sql, power bi, excel, power query, macros</p>
-              </div>
-
-              <div className="skill-group">
-                <h3>engineering</h3>
-                <p>c / c++, embedded systems, matlab, uart, microcontrollers</p>
-              </div>
-
-              <div className="skill-group">
-                <h3>other</h3>
-                <p>dashboarding, process optimization, data analysis, technical project management</p>
-              </div>
+          <div className="skills">
+            <div className="skill-group">
+              <h3>data</h3>
+              <p>python, sql, power bi, excel, power query, macros</p>
             </div>
-          </FadeIn>
+
+            <div className="skill-group">
+              <h3>engineering</h3>
+              <p>c / c++, embedded systems, matlab, uart, microcontrollers</p>
+            </div>
+
+            <div className="skill-group">
+              <h3>other</h3>
+              <p>dashboarding, process optimization, data analysis, technical project management</p>
+            </div>
+          </div>
         </section>
 
         <section id="contact">
@@ -678,28 +662,26 @@ export default function Portfolio() {
             <SectionLabel>v. contact</SectionLabel>
           </FadeIn>
 
-          <FadeIn delay={0.08}>
-            <div className="contact-list">
-              <div>
-                <p className="meta">email</p>
-                <a href="mailto:minhaaa@mcmaster.ca">minhaaa@mcmaster.ca</a>
-              </div>
-
-              <div>
-                <p className="meta">linkedin</p>
-                <a href="https://linkedin.com/in/amanminhas" target="_blank" rel="noreferrer">
-                  linkedin.com/in/amanminhas
-                </a>
-              </div>
-
-              <div>
-                <p className="meta">github</p>
-                <a href="https://github.com/amanminhas" target="_blank" rel="noreferrer">
-                  github.com/amanminhas
-                </a>
-              </div>
+          <div className="contact-list">
+            <div>
+              <p className="meta">email</p>
+              <a href="mailto:minhaaa@mcmaster.ca">minhaaa@mcmaster.ca</a>
             </div>
-          </FadeIn>
+
+            <div>
+              <p className="meta">linkedin</p>
+              <a href="https://linkedin.com/in/amanminhas" target="_blank" rel="noreferrer">
+                linkedin.com/in/amanminhas
+              </a>
+            </div>
+
+            <div>
+              <p className="meta">github</p>
+              <a href="https://github.com/amanminhas" target="_blank" rel="noreferrer">
+                github.com/amanminhas
+              </a>
+            </div>
+          </div>
         </section>
 
         <footer>

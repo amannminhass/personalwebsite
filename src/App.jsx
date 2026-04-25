@@ -540,11 +540,9 @@ export default function App() {
               <Tag color="#1a2d4d">data & analytics @ pepsico</Tag>
             </div>
 
-            <div className="jots">
-              <div className="jot">
-                <span>interested in data engineering, automation, and technical project management</span>
-              </div>
-            </div>
+            <p className="interest-line">
+              interested in data engineering, automation, and technical project management
+            </p>
           </div>
 
           <Polaroids />

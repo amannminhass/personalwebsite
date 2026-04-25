@@ -686,33 +686,6 @@ export default function App() {
           </div>
         </section>
 
-        <section id="contact">
-          <FadeIn>
-            <SectionLabel>v. contact</SectionLabel>
-          </FadeIn>
-
-          <div className="contact-list">
-            <div>
-              <p className="meta">email</p>
-              <a href="mailto:minhaaa@mcmaster.ca">minhaaa@mcmaster.ca</a>
-            </div>
-
-            <div>
-              <p className="meta">linkedin</p>
-              <a href="https://linkedin.com/in/amanminhas" target="_blank" rel="noreferrer">
-                linkedin.com/in/amanminhas
-              </a>
-            </div>
-
-            <div>
-              <p className="meta">github</p>
-              <a href="https://github.com/amannminhass" target="_blank" rel="noreferrer">
-                github.com/amannminhass
-              </a>
-            </div>
-          </div>
-        </section>
-
         <footer>
           <span>aman minhas · {new Date().getFullYear()}</span>
           <span>electrical engineering @ mcmaster</span>

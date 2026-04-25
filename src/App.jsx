@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Github, Linkedin, Mail } from "lucide-react";
+import { Github, LinkedinIcon, Mail } from "lucide-react";
 
 const BG = "#fffdfb";
 const TEXT_PRIMARY = "#1c1816";
@@ -530,7 +530,7 @@ export default function App() {
           <Mail size={17} strokeWidth={1.5} />
           </a>
          <a href="https://linkedin.com/in/amanminhas" target="_blank" rel="noreferrer" aria-label="linkedin">
-           <Linkedin size={17} strokeWidth={1.5} />
+           <LinkedinIcon size={17} strokeWidth={1.5} />
            </a>
            <a href="https://github.com/amannminhass" target="_blank" rel="noreferrer" aria-label="github">
             <Github size={17} strokeWidth={1.5} />

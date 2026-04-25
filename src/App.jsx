@@ -413,6 +413,15 @@ export default function App() {
           flex-wrap: wrap;
         }
 
+        .interest-line {
+          max-width: 520px;
+          text-align: center;
+          font-size: 1.2rem;
+          line-height: 1.5;
+          color: ${TEXT_BODY};
+          margin-top: 2rem;
+        }
+
         .contact-list a {
           display: block;
           font-size: 1.35rem;

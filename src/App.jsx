@@ -448,10 +448,11 @@ export default function App() {
           color: #c5beb6;
         }
 
-        @media (max-width: 850px) {
-          nav {
-            display: flex;
-            padding: 1rem 1.5rem;
+          @media (max-width: 850px) {
+            nav {
+           display: flex;
+           justify-content: space-between;
+           padding: 1rem 1.5rem;
           }
 
           .nav-links {

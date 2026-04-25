@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { Github, Linkedin, Mail } from "lucide-react";
 
 const BG = "#fffdfb";
 const TEXT_PRIMARY = "#1c1816";
@@ -169,6 +170,8 @@ export default function App() {
           backdrop-filter: ${scrolled ? "blur(12px)" : "none"};
           border-bottom: ${scrolled ? `1px solid ${LINE}` : "none"};
         }
+          
+        
 
         .nav-name {
           font-size: 1rem;
@@ -189,6 +192,24 @@ export default function App() {
           border: none;
           cursor: pointer;
         }
+
+        .nav-icons {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+        }
+
+        .nav-icons a {
+          color: ${TEXT_MUTED};
+          display: flex;
+          align-items: center;
+          transition: color 0.2s ease, transform 0.2s ease;
+        }
+
+        .nav-icons a:hover {
+          color: ${TEXT_PRIMARY};
+          transform: translateY(-1px);
+}
 
         .intro {
           max-width: 1040px;
@@ -426,6 +447,14 @@ export default function App() {
           nav {
             padding: 1rem 1.5rem;
           }
+          .nav-links {
+            display: none;
+          }
+
+        .nav-icons {
+          gap: 0.85rem;
+          }
+        }
 
           .nav-links {
             gap: 1rem;
@@ -485,7 +514,7 @@ export default function App() {
         <div className="nav-name">aman minhas</div>
 
         <div className="nav-links">
-          {sections.map((sec) => (
+          {sections.slice(0, 4).map((sec) => (
             <button
               key={sec}
               onClick={() => scrollTo(sec)}
@@ -494,6 +523,18 @@ export default function App() {
               {sec}
             </button>
           ))}
+        </div>
+
+        <div className="nav-icons">
+         <a href="mailto:minhaaa@mcmaster.ca" aria-label="email">
+          <Mail size={17} strokeWidth={1.5} />
+          </a>
+         <a href="https://linkedin.com/in/amanminhas" target="_blank" rel="noreferrer" aria-label="linkedin">
+           <Linkedin size={17} strokeWidth={1.5} />
+           </a>
+           <a href="https://github.com/amannminhass" target="_blank" rel="noreferrer" aria-label="github">
+            <Github size={17} strokeWidth={1.5} />
+         </a>
         </div>
       </nav>
 

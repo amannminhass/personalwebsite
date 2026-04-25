@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from "react";
-import { Github, LinkedinIcon, Mail } from "lucide-react";
 
 const BG = "#fffdfb";
 const TEXT_PRIMARY = "#1c1816";
@@ -44,37 +43,14 @@ function FadeIn({ children }) {
 
 function Tag({ children, color }) {
   return (
-    <span
-      style={{
-        background: color,
-        color: "#fffdfb",
-        padding: "3px 9px",
-        borderRadius: "3px",
-        fontFamily: "'DM Mono', monospace",
-        fontSize: "0.68rem",
-        letterSpacing: "0.08em",
-      }}
-    >
+    <span className="tag" style={{ background: color }}>
       {children}
     </span>
   );
 }
 
 function SectionLabel({ children }) {
-  return (
-    <p
-      style={{
-        fontFamily: "'DM Mono', monospace",
-        fontSize: "0.65rem",
-        letterSpacing: "0.18em",
-        textTransform: "uppercase",
-        color: TEXT_MUTED,
-        marginBottom: "2rem",
-      }}
-    >
-      {children}
-    </p>
-  );
+  return <p className="section-label">{children}</p>;
 }
 
 function Polaroids() {
@@ -133,7 +109,7 @@ export default function App() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,300;0,400;1,400&family=DM+Mono:wght@300;400&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,300;0,400;1,400&family=Cormorant+Garamond:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap');
 
         * {
           box-sizing: border-box;
@@ -162,25 +138,25 @@ export default function App() {
           left: 0;
           right: 0;
           z-index: 100;
-          display: flex;
-          justify-content: space-between;
+          display: grid;
+          grid-template-columns: 1fr auto 1fr;
           align-items: center;
           padding: 1.2rem 3rem;
           background: ${scrolled ? "rgba(255,253,251,0.92)" : "transparent"};
           backdrop-filter: ${scrolled ? "blur(12px)" : "none"};
           border-bottom: ${scrolled ? `1px solid ${LINE}` : "none"};
         }
-          
-        
 
         .nav-name {
           font-size: 1rem;
           font-style: italic;
+          color: ${TEXT_PRIMARY};
         }
 
         .nav-links {
           display: flex;
           gap: 2rem;
+          justify-content: center;
         }
 
         .nav-links button {
@@ -195,21 +171,24 @@ export default function App() {
 
         .nav-icons {
           display: flex;
+          justify-content: flex-end;
           align-items: center;
           gap: 1rem;
         }
 
         .nav-icons a {
           color: ${TEXT_MUTED};
-          display: flex;
-          align-items: center;
+          text-decoration: none;
+          font-family: 'DM Mono', monospace;
+          font-size: 0.72rem;
+          letter-spacing: 0.12em;
           transition: color 0.2s ease, transform 0.2s ease;
         }
 
         .nav-icons a:hover {
           color: ${TEXT_PRIMARY};
           transform: translateY(-1px);
-}
+        }
 
         .intro {
           max-width: 1040px;
@@ -233,17 +212,22 @@ export default function App() {
           font-style: italic;
         }
 
-
         .tags {
           display: flex;
           gap: 0.55rem;
           flex-wrap: wrap;
+          justify-content: center;
+          max-width: 520px;
           margin-bottom: 2.2rem;
         }
 
-        .centered-tags {
-          justify-content: center;
-          max-width: 520px;
+        .tag {
+          color: #fffdfb;
+          padding: 3px 9px;
+          border-radius: 3px;
+          font-family: 'DM Mono', monospace;
+          font-size: 0.68rem;
+          letter-spacing: 0.08em;
         }
 
         .jots {
@@ -301,6 +285,15 @@ export default function App() {
           margin: 0 auto;
           padding: 5.5rem 3rem;
           border-top: 1px solid ${LINE};
+        }
+
+        .section-label {
+          font-family: 'DM Mono', monospace;
+          font-size: 0.65rem;
+          letter-spacing: 0.18em;
+          text-transform: uppercase;
+          color: ${TEXT_MUTED};
+          margin-bottom: 2rem;
         }
 
         .about-text {
@@ -445,29 +438,27 @@ export default function App() {
 
         @media (max-width: 850px) {
           nav {
+            display: flex;
             padding: 1rem 1.5rem;
           }
+
           .nav-links {
             display: none;
           }
 
-        .nav-icons {
-          gap: 0.85rem;
-          }
-        }
-
-          .nav-links {
-            gap: 1rem;
-          }
-
-          .nav-links button {
-            font-size: 0.55rem;
+          .nav-icons {
+            gap: 0.85rem;
           }
 
           .intro {
             grid-template-columns: 1fr;
             padding: 13vh 1.5rem 4rem;
             gap: 2.5rem;
+          }
+
+          .name,
+          .tags {
+            max-width: 100%;
           }
 
           .polaroids {
@@ -526,15 +517,9 @@ export default function App() {
         </div>
 
         <div className="nav-icons">
-         <a href="mailto:minhaaa@mcmaster.ca" aria-label="email">
-          <Mail size={17} strokeWidth={1.5} />
-          </a>
-         <a href="https://linkedin.com/in/amanminhas" target="_blank" rel="noreferrer" aria-label="linkedin">
-           <LinkedinIcon size={17} strokeWidth={1.5} />
-           </a>
-           <a href="https://github.com/amannminhass" target="_blank" rel="noreferrer" aria-label="github">
-            <Github size={17} strokeWidth={1.5} />
-         </a>
+          <a href="mailto:minhaaa@mcmaster.ca" aria-label="email">mail</a>
+          <a href="https://linkedin.com/in/amanminhas" target="_blank" rel="noreferrer" aria-label="linkedin">in</a>
+          <a href="https://github.com/amannminhass" target="_blank" rel="noreferrer" aria-label="github">gh</a>
         </div>
       </nav>
 
@@ -547,10 +532,11 @@ export default function App() {
               Minhas
             </h1>
 
-          <div className="tags centered-tags">
-            <Tag color="#6b2737">electrical engineering @ mcmaster</Tag>
-            <Tag color="#1a2d4d">data & analytics @ pepsico</Tag>
-          </div>
+            <div className="tags">
+              <Tag color="#6b2737">electrical engineering @ mcmaster</Tag>
+              <Tag color="#1a2d4d">data & analytics @ pepsico</Tag>
+            </div>
+
             <div className="jots">
               <div className="jot">
                 <span>i.</span>
@@ -598,6 +584,7 @@ export default function App() {
                   <p className="meta">procurement intern · incoming</p>
                   <Tag color="#1a2d4d">2025</Tag>
                 </div>
+
                 <ul>
                   <li>working on data-driven procurement processes and dashboards</li>
                   <li>supporting project-based initiatives at hq</li>
@@ -612,6 +599,7 @@ export default function App() {
                   <p className="meta">supply planning analyst intern</p>
                   <Tag color="#6b2737">2024</Tag>
                 </div>
+
                 <ul>
                   <li>built power bi dashboards and excel automation tools to support supply planning workflows</li>
                   <li>worked with large-scale supply chain datasets across enterprise systems</li>
@@ -718,8 +706,8 @@ export default function App() {
 
             <div>
               <p className="meta">github</p>
-              <a href="https://github.com/amanminhas" target="_blank" rel="noreferrer">
-                github.com/amanminhas
+              <a href="https://github.com/amannminhass" target="_blank" rel="noreferrer">
+                github.com/amannminhass
               </a>
             </div>
           </div>

@@ -685,7 +685,6 @@ export default function App() {
 
         <footer>
           <span>aman minhas · {new Date().getFullYear()}</span>
-          <span>electrical engineering @ mcmaster</span>
         </footer>
       </main>
     </>

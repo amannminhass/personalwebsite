@@ -542,7 +542,6 @@ export default function App() {
 
             <div className="jots">
               <div className="jot">
-                <span>iv.</span>
                 <p>interested in data engineering, automation, and technical project management</p>
               </div>
             </div>

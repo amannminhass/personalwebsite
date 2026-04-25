@@ -542,18 +542,6 @@ export default function App() {
 
             <div className="jots">
               <div className="jot">
-                <span>i.</span>
-                <p>currently procurement intern @ pepsico</p>
-              </div>
-              <div className="jot">
-                <span>ii.</span>
-                <p>studying electrical engineering + innovation minor @ mcmaster</p>
-              </div>
-              <div className="jot">
-                <span>iii.</span>
-                <p>previously supply planning analyst intern @ pepsico</p>
-              </div>
-              <div className="jot">
                 <span>iv.</span>
                 <p>interested in data engineering, automation, and technical project management</p>
               </div>

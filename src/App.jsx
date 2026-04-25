@@ -294,6 +294,7 @@ export default function App() {
           text-transform: uppercase;
           color: ${TEXT_MUTED};
           margin-bottom: 2rem;
+          text-align: center;
         }
 
         .about-text {
@@ -301,6 +302,8 @@ export default function App() {
           font-size: 1.35rem;
           line-height: 1.75;
           color: ${TEXT_BODY};
+          text-align: center;
+          margin: 0 auto;
         }
 
         .experience-list,

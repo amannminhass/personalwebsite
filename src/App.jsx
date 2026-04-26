@@ -502,6 +502,19 @@ export default function App() {
             grid-template-columns: 2.4rem 1fr;
           }
 
+          .more-projects-button {
+            display: block;
+            width: fit-content;
+            margin: 4rem auto 0;
+            font-family: 'DM Mono', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 0.12em;
+            color: ${TEXT_PRIMARY};
+            text-decoration: none;
+            border-bottom: 1px solid ${TEXT_PRIMARY};
+            padding-bottom: 0.25rem;
+          }
+
           .skills {
             grid-template-columns: 1fr;
             gap: 2rem;
@@ -659,6 +672,9 @@ export default function App() {
               </div>
             </FadeIn>
           </div>
+          <a href="/more-projects" className="more-projects-button">
+            view more projects →
+          </a>
         </section>
 
         <section id="skills">
